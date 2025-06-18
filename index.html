@@ -128,6 +128,7 @@
 
   <div id="questions" class="section"></div>
   <button id="next" class="hidden">التالي</button>
+  <button id="generate-random" class="hidden">توليد كلمة المرور</button>
   <div id="result" class="result hidden"></div>
 </div>
 
@@ -140,10 +141,12 @@
   const strengthEl = document.getElementById('strength');
   const questionsDiv = document.getElementById('questions');
   const nextBtn = document.getElementById('next');
+  const randomBtn = document.getElementById('generate-random');
   const resultEl = document.getElementById('result');
 
   let currentQuestion = 0;
   let answers = [];
+  let currentSet = [];
 
   const easyQuestions = [
     { label: 'ما هو تاريخ ميلادك؟', id: 'birth' },
@@ -171,6 +174,7 @@
     answers = [];
     questionsDiv.innerHTML = '';
     nextBtn.classList.add('hidden');
+    randomBtn.classList.add('hidden');
 
     const level = strengthEl.value;
     if (level === 'easy') {
@@ -186,7 +190,7 @@
       showQuestion(currentSet[currentQuestion]);
       nextBtn.classList.remove('hidden');
     } else if (level === 'random') {
-      generateRandomPassword();
+      randomBtn.classList.remove('hidden');
     }
   });
 
@@ -208,6 +212,10 @@
       nextBtn.classList.add('hidden');
       generatePassword(strengthEl.value);
     }
+  });
+
+  randomBtn.addEventListener('click', () => {
+    generateRandomPassword();
   });
 
   function generatePassword(level) {
