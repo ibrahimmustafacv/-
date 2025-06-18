@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>باسوردك في جيبك</title>
   <style>
     * {
@@ -63,6 +63,7 @@
       box-shadow: 0 0 10px rgba(255,255,255,0.2);
       backdrop-filter: blur(8px);
       font-size: 18px;
+      direction: ltr;
     }
     input, select, button {
       padding: 12px;
@@ -98,23 +99,24 @@
       font-size: 16px;
       margin-bottom: 6px;
     }
+    .icon-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .icon-buttons img {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+    #follow-btn {
+      margin-top: 25px;
+      background: #28a745;
+    }
     @keyframes fadeIn {
       from {opacity: 0; transform: translateY(20px);}
       to {opacity: 1; transform: translateY(0);}
-    }
-    .actions {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .actions.hidden {
-      display: none;
-    }
-    .download-icon {
-      width: 24px;
-      height: 24px;
-      vertical-align: middle;
     }
   </style>
 </head>
@@ -140,21 +142,16 @@
 
   <div id="questions" class="section"></div>
   <button id="next" class="hidden">التالي</button>
-  <button id="generateRandom" class="hidden">توليد كلمة مرور</button>
+  <button id="generate-random" class="hidden">توليد كلمة مرور</button>
+
   <div id="result" class="result hidden"></div>
 
-  <div id="actions" class="actions hidden">
-    <button onclick="copyPassword()">نسخ</button>
-    <a href="Download password.png" download>
-      <img src="Download password.png" alt="Download" class="download-icon">
-    </a>
+  <div class="icon-buttons hidden" id="actions">
+    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png" id="copy" title="نسخ">
+    <img src="Download password.png" id="download" title="تحميل">
   </div>
 
-  <div style="margin-top: 30px;">
-    <button onclick="window.open('https://ibrahimmustafacv.github.io/my-social-media-page/', '_blank')">
-      تابعنا هنا
-    </button>
-  </div>
+  <button id="follow-btn" onclick="window.open('https://ibrahimmustafacv.github.io/my-social-media-page/', '_blank')">تابعنا هنا</button>
 </div>
 
 <script>
@@ -167,12 +164,13 @@
   const questionsDiv = document.getElementById('questions');
   const nextBtn = document.getElementById('next');
   const resultEl = document.getElementById('result');
-  const generateRandomBtn = document.getElementById('generateRandom');
-  const actionsDiv = document.getElementById('actions');
+  const actionsEl = document.getElementById('actions');
+  const copyBtn = document.getElementById('copy');
+  const downloadBtn = document.getElementById('download');
+  const generateRandomBtn = document.getElementById('generate-random');
 
   let currentQuestion = 0;
   let answers = [];
-  let currentSet = [];
 
   const easyQuestions = [
     { label: 'ما هو تاريخ ميلادك؟', id: 'birth' },
@@ -194,26 +192,33 @@
     { label: 'حرف مميز آخر:', id: 'char2' }
   ];
 
+  let currentSet = [];
+
   strengthEl.addEventListener('change', () => {
     resultEl.classList.add('hidden');
-    actionsDiv.classList.add('hidden');
+    actionsEl.classList.add('hidden');
+    generateRandomBtn.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+    questionsDiv.innerHTML = '';
     currentQuestion = 0;
     answers = [];
-    questionsDiv.innerHTML = '';
-    nextBtn.classList.add('hidden');
-    generateRandomBtn.classList.add('hidden');
 
     const level = strengthEl.value;
-    if (level === 'easy') currentSet = easyQuestions;
-    else if (level === 'medium') currentSet = mediumQuestions;
-    else if (level === 'strong') currentSet = strongQuestions;
-    else if (level === 'random') {
+    if (level === 'easy') {
+      currentSet = easyQuestions;
+      showQuestion(currentSet[currentQuestion]);
+      nextBtn.classList.remove('hidden');
+    } else if (level === 'medium') {
+      currentSet = mediumQuestions;
+      showQuestion(currentSet[currentQuestion]);
+      nextBtn.classList.remove('hidden');
+    } else if (level === 'strong') {
+      currentSet = strongQuestions;
+      showQuestion(currentSet[currentQuestion]);
+      nextBtn.classList.remove('hidden');
+    } else if (level === 'random') {
       generateRandomBtn.classList.remove('hidden');
-      return;
-    } else return;
-
-    showQuestion(currentSet[currentQuestion]);
-    nextBtn.classList.remove('hidden');
+    }
   });
 
   function showQuestion(q) {
@@ -226,7 +231,6 @@
   nextBtn.addEventListener('click', () => {
     const input = questionsDiv.querySelector('input');
     answers.push(input.value.trim());
-
     currentQuestion++;
     if (currentQuestion < currentSet.length) {
       showQuestion(currentSet[currentQuestion]);
@@ -237,12 +241,13 @@
   });
 
   generateRandomBtn.addEventListener('click', () => {
-    const pw = generateRandomPassword(16);
-    showPassword(pw);
+    const pw = generateRandomPassword(14);
+    resultEl.textContent = pw;
+    resultEl.classList.remove('hidden');
+    actionsEl.classList.remove('hidden');
   });
 
   function generatePassword(level) {
-    resultEl.innerHTML = '';
     let pw = '';
     if (level === 'easy') {
       pw = answers[0].slice(0,2) + answers[1].slice(2,4) + answers[2].slice(4,6);
@@ -251,31 +256,34 @@
     } else if (level === 'strong') {
       pw = `${answers[0]}.${answers[1]}${answers[2]}*#${answers[3].toUpperCase()}${answers[3].toLowerCase()}${answers[4]}${answers[5].toUpperCase()}${answers[5].toLowerCase()}s`;
     }
-    showPassword(pw);
-  }
-
-  function showPassword(pw) {
     resultEl.textContent = pw;
     resultEl.classList.remove('hidden');
-    actionsDiv.classList.remove('hidden');
+    actionsEl.classList.remove('hidden');
   }
 
   function generateRandomPassword(length) {
-    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~";
-    let pass = "";
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+    let pw = '';
     for (let i = 0; i < length; i++) {
-      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+      pw += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    return pass;
+    return pw;
   }
 
-  function copyPassword() {
+  copyBtn.addEventListener('click', () => {
     const text = resultEl.textContent;
     navigator.clipboard.writeText(text).then(() => {
       alert("تم نسخ كلمة المرور!");
     });
-  }
-</script>
+  });
 
+  downloadBtn.addEventListener('click', () => {
+    const blob = new Blob([resultEl.textContent], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'password.txt';
+    link.click();
+  });
+</script>
 </body>
 </html>
