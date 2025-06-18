@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>باسوردك في جيبك</title>
   <style>
     * {
@@ -105,10 +105,14 @@
       gap: 15px;
       margin-top: 10px;
     }
-    .icon-buttons img {
-      width: 24px;
-      height: 24px;
+    .icon-buttons button {
+      background: none;
+      border: none;
       cursor: pointer;
+    }
+    .icon-buttons img {
+      width: 28px;
+      height: 28px;
     }
     #follow-btn {
       margin-top: 25px;
@@ -147,8 +151,12 @@
   <div id="result" class="result hidden"></div>
 
   <div class="icon-buttons hidden" id="actions">
-    <img src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png" id="copy" title="نسخ">
-    <img src="Download password.png" id="download" title="تحميل">
+    <button id="copy" title="نسخ">
+      <img src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png" alt="copy">
+    </button>
+    <button id="download" title="تحميل">
+      <img src="Download password.png" alt="download">
+    </button>
   </div>
 
   <button id="follow-btn" onclick="window.open('https://ibrahimmustafacv.github.io/my-social-media-page/', '_blank')">تابعنا هنا</button>
@@ -278,12 +286,16 @@
   });
 
   downloadBtn.addEventListener('click', () => {
-    const blob = new Blob([resultEl.textContent], { type: 'text/plain' });
+    const pw = resultEl.textContent;
+    const blob = new Blob([pw], { type: 'text/plain' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = 'password.txt';
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
   });
 </script>
+
 </body>
 </html>
