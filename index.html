@@ -1,110 +1,120 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>باسوردك في جيبك</title>
   <style>
     * {
       box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Cairo', sans-serif;
     }
     body {
       margin: 0;
       padding: 0;
-      background: linear-gradient(to bottom, #1c1c1c, #2e2e2e);
-      color: #fff;
+      background: #0c0c0c;
       direction: rtl;
       text-align: center;
+      color: white;
       overflow-x: hidden;
     }
-
-    video {
+    video.bg {
       position: fixed;
-      right: 0;
-      bottom: 0;
-      min-width: 100%;
-      min-height: 100%;
-      z-index: -1;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
+      z-index: -1;
       filter: brightness(0.3);
+      pointer-events: none;
     }
-
-    #video-container {
-      display: block;
+    #video-container, #app {
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
       padding: 20px;
+      position: relative;
     }
-
+    #video-container video {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      max-height: 50vh;
+      object-fit: contain;
+    }
     #app {
       display: none;
-      padding: 30px 20px;
       animation: fadeIn 2s ease-in-out;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     h2 {
       color: #ffffff;
       font-size: 28px;
       margin-bottom: 20px;
+      text-shadow: 1px 1px 5px #000;
     }
-
-    select, input, button {
-      padding: 12px 15px;
-      margin: 10px auto;
-      width: 90%;
-      max-width: 400px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-      display: block;
+    .section {
+      margin: 20px 0;
     }
-
-    select, input {
-      background-color: #3a3a3a;
-      color: #fff;
-    }
-
-    button {
-      background: #00bcd4;
-      color: #fff;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background: #0097a7;
-    }
-
-    .result {
-      background: rgba(255, 255, 255, 0.1);
-      margin-top: 20px;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 188, 212, 0.2);
-    }
-
-    .arrow {
-      font-size: 16px;
-      margin: 4px 0;
-    }
-
-    .question {
+    .hidden {
       display: none;
-      animation: fadeIn 0.6s ease-in-out;
+    }
+    .result {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      margin-top: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+      backdrop-filter: blur(8px);
+    }
+    input, select, button {
+      padding: 12px;
+      margin: 8px;
+      width: 90%;
+      max-width: 300px;
+      border-radius: 30px;
+      border: none;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      backdrop-filter: blur(4px);
+      transition: all 0.3s ease-in-out;
+    }
+    input::placeholder, select, option {
+      color: #ccc;
+    }
+    input:focus, select:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    button {
+      background: linear-gradient(135deg, #1e90ff, #00bfff);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease-in-out;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #0066cc, #0099cc);
+    }
+    label {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
     }
   </style>
 </head>
 <body>
 
-<video autoplay muted loop>
-  <source src="background.mp4" type="video/mp4" />
+<video class="bg" autoplay loop muted playsinline>
+  <source src="background.mp4" type="video/mp4">
 </video>
 
 <div id="video-container">
-  <video src="video.mp4" autoplay muted></video>
+  <video src="video.mp4" autoplay muted playsinline></video>
 </div>
 
 <div id="app">
@@ -117,7 +127,8 @@
   </select>
 
   <div id="questions" class="section"></div>
-  <div id="result" class="result" style="display:none;"></div>
+  <button id="next" class="hidden">التالي</button>
+  <div id="result" class="result hidden"></div>
 </div>
 
 <script>
@@ -128,134 +139,84 @@
 
   const strengthEl = document.getElementById('strength');
   const questionsDiv = document.getElementById('questions');
-  const resultDiv = document.getElementById('result');
+  const nextBtn = document.getElementById('next');
+  const resultEl = document.getElementById('result');
+
+  let currentQuestion = 0;
+  let answers = [];
+
+  const easyQuestions = [
+    { label: 'ما هو تاريخ ميلادك؟', id: 'birth' },
+    { label: 'ما هو رقم تليفونك؟', id: 'phone' },
+    { label: 'ما هو تاريخ ذكرى سعيدة؟', id: 'memory' }
+  ];
+
+  const mediumQuestions = [
+    { label: 'اختار اسم (مثلاً اسمك أو اسم بنتك):', id: 'name' },
+    { label: 'رقم أو تاريخ أو رقم مميز عندك:', id: 'mediumNumber' }
+  ];
+
+  const strongQuestions = [
+    { label: 'اكتب اسم بالإنجليزية:', id: 'engName' },
+    { label: 'رقم مميز جدًا:', id: 'specialNum' },
+    { label: 'أول حرفين من اسمك بالإنجليزية:', id: 'initials' },
+    { label: 'اكتب حرف مميز:', id: 'char1' },
+    { label: 'اكتب رقمين مميزين:', id: 'digits' },
+    { label: 'حرف مميز آخر:', id: 'char2' }
+  ];
+
+  let currentSet = [];
 
   strengthEl.addEventListener('change', () => {
-    const level = strengthEl.value;
+    resultEl.classList.add('hidden');
+    currentQuestion = 0;
+    answers = [];
     questionsDiv.innerHTML = '';
-    resultDiv.style.display = 'none';
+    nextBtn.classList.add('hidden');
 
-    if (level === 'easy') {
-      askEasy();
-    } else if (level === 'medium') {
-      askMedium();
-    } else if (level === 'strong') {
-      askStrong();
+    const level = strengthEl.value;
+    if (level === 'easy') currentSet = easyQuestions;
+    else if (level === 'medium') currentSet = mediumQuestions;
+    else if (level === 'strong') currentSet = strongQuestions;
+    else return;
+
+    showQuestion(currentSet[currentQuestion]);
+    nextBtn.classList.remove('hidden');
+  });
+
+  function showQuestion(q) {
+    questionsDiv.innerHTML = `
+      <label>${q.label}</label>
+      <input type="text" id="${q.id}" placeholder="اكتب هنا...">
+    `;
+  }
+
+  nextBtn.addEventListener('click', () => {
+    const input = questionsDiv.querySelector('input');
+    answers.push(input.value.trim());
+
+    currentQuestion++;
+    if (currentQuestion < currentSet.length) {
+      showQuestion(currentSet[currentQuestion]);
+    } else {
+      nextBtn.classList.add('hidden');
+      generatePassword(strengthEl.value);
     }
   });
 
-  function createQuestion(label, id, callback) {
-    const div = document.createElement('div');
-    div.className = 'question';
-    div.innerHTML = `
-      <label>${label}<input type="text" id="${id}"></label>
-      <button onclick="${callback}()">التالي</button>
-    `;
-    questionsDiv.appendChild(div);
-    div.style.display = 'block';
-  }
-
-  function askEasy() {
-    questionsDiv.innerHTML = '';
-    createQuestion('تاريخ ميلادك (مثلاً 19900101)', 'easy_birth', 'askEasy2');
-  }
-
-  function askEasy2() {
-    const birth = document.getElementById('easy_birth').value;
-    questionsDiv.innerHTML = '';
-    createQuestion('رقم تليفونك', 'easy_phone', 'askEasy3');
-    window.easyData = { birth };
-  }
-
-  function askEasy3() {
-    const phone = document.getElementById('easy_phone').value;
-    questionsDiv.innerHTML = '';
-    createQuestion('تاريخ ذكرى سعيدة', 'easy_memory', 'showEasy');
-    window.easyData.phone = phone;
-  }
-
-  function showEasy() {
-    const memory = document.getElementById('easy_memory').value;
-    const { birth, phone } = window.easyData;
-    const pw = birth.slice(0, 2) + phone.slice(2, 4) + memory.slice(4, 6);
-    resultDiv.innerHTML = `كلمة المرور: ${pw}<br>
-      <div class='arrow'>← أول رقمين من تاريخ الميلاد</div>
-      <div class='arrow'>← ثاني رقمين من رقم التليفون</div>
-      <div class='arrow'>← آخر رقمين من الذكرى</div>`;
-    resultDiv.style.display = 'block';
-    questionsDiv.innerHTML = '';
-  }
-
-  function askMedium() {
-    questionsDiv.innerHTML = '';
-    createQuestion('اختار اسم (مثلاً اسمي، زوجتي، بنتي)', 'medium_name', 'askMedium2');
-  }
-
-  function askMedium2() {
-    const name = document.getElementById('medium_name').value;
-    questionsDiv.innerHTML = '';
-    createQuestion('رقم مميز أو تاريخ تحبه', 'medium_num', 'showMedium');
-    window.mediumData = { name };
-  }
-
-  function showMedium() {
-    const num = document.getElementById('medium_num').value;
-    const { name } = window.mediumData;
-    const pw = name + num;
-    resultDiv.innerHTML = `كلمة المرور: ${pw}<br>
-      <div class='arrow'>← الاسم</div>
-      <div class='arrow'>← الرقم المميز أو التاريخ</div>`;
-    resultDiv.style.display = 'block';
-    questionsDiv.innerHTML = '';
-  }
-
-  function askStrong() {
-    questionsDiv.innerHTML = '';
-    createQuestion('اكتب اسمك بالإنجليزية', 's_name', 'askStrong2');
-  }
-
-  function askStrong2() {
-    const name = document.getElementById('s_name').value;
-    questionsDiv.innerHTML = '';
-    createQuestion('اكتب رقم مميز جدًا', 's_num', 'askStrong3');
-    window.strongData = { name };
-  }
-
-  function askStrong3() {
-    const num = document.getElementById('s_num').value;
-    questionsDiv.innerHTML = '';
-    createQuestion('أول حرفين من اسمك بالإنجليزية', 's_init', 'askStrong4');
-    window.strongData.num = num;
-  }
-
-  function askStrong4() {
-    const init = document.getElementById('s_init').value;
-    questionsDiv.innerHTML = '';
-    createQuestion('اكتب حرف مميز', 's_char1', 'askStrong5');
-    window.strongData.init = init;
-  }
-
-  function askStrong5() {
-    const char1 = document.getElementById('s_char1').value;
-    questionsDiv.innerHTML = '';
-    createQuestion('اكتب رقمين مميزين', 's_digits', 'askStrong6');
-    window.strongData.char1 = char1;
-  }
-
-  function askStrong6() {
-    const digits = document.getElementById('s_digits').value;
-    questionsDiv.innerHTML = '';
-    createQuestion('اكتب حرف مميز أخير', 's_char2', 'showStrong');
-    window.strongData.digits = digits;
-  }
-
-  function showStrong() {
-    const lastChar = document.getElementById('s_char2').value;
-    const { name, num, init, char1, digits } = window.strongData;
-    const pw = `${name}.${num}${init}*#${char1.toUpperCase()}${char1.toLowerCase()}${digits}${lastChar.toUpperCase()}${lastChar.toLowerCase()}s`;
-    resultDiv.innerHTML = `كلمة المرور القوية: ${pw}`;
-    resultDiv.style.display = 'block';
-    questionsDiv.innerHTML = '';
+  function generatePassword(level) {
+    resultEl.innerHTML = '';
+    if (level === 'easy') {
+      const pw = answers[0].slice(0,2) + answers[1].slice(2,4) + answers[2].slice(4,6);
+      resultEl.innerHTML = `كلمة المرور: ${pw}<br>← أول رقمين من تاريخ الميلاد<br>← ثاني رقمين من رقم التليفون<br>← آخر رقمين من الذكرى`;
+    } else if (level === 'medium') {
+      const pw = answers[0] + answers[1];
+      resultEl.innerHTML = `كلمة المرور: ${pw}<br>← الاسم اللي اخترته<br>← الرقم أو التاريخ`;
+    } else if (level === 'strong') {
+      const pw = `${answers[0]}.${answers[1]}${answers[2]}*#${answers[3].toUpperCase()}${answers[3].toLowerCase()}${answers[4]}${answers[5].toUpperCase()}${answers[5].toLowerCase()}s`;
+      resultEl.innerHTML = `كلمة المرور القوية: ${pw}`;
+    }
+    resultEl.classList.remove('hidden');
   }
 </script>
 </body>
