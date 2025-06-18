@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>باسوردك في جيبك</title>
   <style>
     * {
@@ -43,15 +43,15 @@
       display: none;
       animation: fadeIn 2s ease-in-out;
     }
-    h1.site-title {
-      font-size: 32px;
-      color: #fff;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 6px #000;
+    h1 {
+      color: white;
+      font-size: 30px;
+      margin: 10px 0;
+      text-shadow: 1px 1px 5px #000;
     }
     h2 {
       color: #ffffff;
-      font-size: 24px;
+      font-size: 28px;
       margin-bottom: 20px;
       text-shadow: 1px 1px 5px #000;
     }
@@ -106,8 +106,13 @@
     .action-buttons {
       display: flex;
       justify-content: center;
+      align-items: center;
       gap: 10px;
-      margin-top: 15px;
+      margin-top: 10px;
+    }
+    .action-buttons img {
+      width: 24px;
+      height: 24px;
     }
     @keyframes fadeIn {
       from {opacity: 0; transform: translateY(20px);}
@@ -118,7 +123,7 @@
 <body>
 
 <video class="bg" autoplay loop muted>
-  <source src="background.mp4" type="video/mp4">
+  <source src="background.mp4" type="video/mp4" />
 </video>
 
 <div id="video-container">
@@ -126,9 +131,8 @@
 </div>
 
 <div id="app">
-  <h1 class="site-title">باسوردك في جيبك</h1>
+  <h1>باسوردك في جيبك</h1>
   <h2>اختار قوة كلمة المرور</h2>
-
   <select id="strength">
     <option value="">-- اختار --</option>
     <option value="easy">سهلة</option>
@@ -139,21 +143,16 @@
 
   <div id="questions" class="section"></div>
   <button id="next" class="hidden">التالي</button>
-  <button id="generateRandom" class="hidden">توليد كلمة مرور</button>
   <div id="result" class="result hidden"></div>
 
   <div id="actions" class="action-buttons hidden">
     <button id="copyBtn">نسخ</button>
     <button id="downloadBtn">
-      <img src="Download password.png" alt="تحميل" style="width: 24px; height: 24px;">
+      <img src="Download password.png" alt="تحميل">
     </button>
   </div>
 
-  <div class="section">
-    <a href="https://ibrahimmustafacv.github.io/my-social-media-page/" target="_blank">
-      <button>تابعنا هنا</button>
-    </a>
-  </div>
+  <button onclick="window.open('https://ibrahimmustafacv.github.io/my-social-media-page/', '_blank')">تابعنا هنا</button>
 </div>
 
 <script>
@@ -165,15 +164,13 @@
   const strengthEl = document.getElementById('strength');
   const questionsDiv = document.getElementById('questions');
   const nextBtn = document.getElementById('next');
-  const generateRandomBtn = document.getElementById('generateRandom');
   const resultEl = document.getElementById('result');
+  const actions = document.getElementById('actions');
   const copyBtn = document.getElementById('copyBtn');
   const downloadBtn = document.getElementById('downloadBtn');
-  const actions = document.getElementById('actions');
 
   let currentQuestion = 0;
   let answers = [];
-  let currentSet = [];
 
   const easyQuestions = [
     { label: 'ما هو تاريخ ميلادك؟', id: 'birth' },
@@ -195,6 +192,8 @@
     { label: 'حرف مميز آخر:', id: 'char2' }
   ];
 
+  let currentSet = [];
+
   strengthEl.addEventListener('change', () => {
     resultEl.classList.add('hidden');
     actions.classList.add('hidden');
@@ -202,14 +201,14 @@
     answers = [];
     questionsDiv.innerHTML = '';
     nextBtn.classList.add('hidden');
-    generateRandomBtn.classList.add('hidden');
 
     const level = strengthEl.value;
     if (level === 'easy') currentSet = easyQuestions;
     else if (level === 'medium') currentSet = mediumQuestions;
     else if (level === 'strong') currentSet = strongQuestions;
     else if (level === 'random') {
-      generateRandomBtn.classList.remove('hidden');
+      const password = generateRandomPassword(12);
+      showPasswordOnly(password);
       return;
     } else return;
 
@@ -235,15 +234,6 @@
       nextBtn.classList.add('hidden');
       generatePassword(strengthEl.value);
     }
-  });
-
-  generateRandomBtn.addEventListener('click', () => {
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
-    let randomPassword = "";
-    for (let i = 0; i < 16; i++) {
-      randomPassword += charset[Math.floor(Math.random() * charset.length)];
-    }
-    showPasswordOnly(randomPassword);
   });
 
   function generatePassword(level) {
@@ -277,6 +267,15 @@
       a.click();
       document.body.removeChild(a);
     };
+  }
+
+  function generateRandomPassword(length) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
   }
 </script>
 </body>
