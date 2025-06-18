@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>باسوردك في جيبك</title>
   <style>
     * {
@@ -53,7 +53,7 @@
       margin: 20px 0;
     }
     .hidden {
-      display: none !important;
+      display: none;
     }
     .result {
       background: rgba(255,255,255,0.1);
@@ -62,9 +62,7 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(255,255,255,0.2);
       backdrop-filter: blur(8px);
-      font-size: 20px;
-      direction: ltr;
-      text-align: center;
+      font-size: 18px;
     }
     input, select, button {
       padding: 12px;
@@ -100,27 +98,15 @@
       font-size: 16px;
       margin-bottom: 6px;
     }
-    #buttons {
-      margin-top: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: nowrap;
-    }
-    .download-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-    }
-    .download-btn img {
-      width: 40px;
-      height: 40px;
-    }
     @keyframes fadeIn {
       from {opacity: 0; transform: translateY(20px);}
       to {opacity: 1; transform: translateY(0);}
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -146,13 +132,19 @@
 
   <div id="questions" class="section"></div>
   <button id="next" class="hidden">التالي</button>
-  <button id="generate-random" class="hidden">توليد كلمة المرور</button>
+  <button id="generateRandom" class="hidden">توليد كلمة مرور</button>
   <div id="result" class="result hidden"></div>
 
-  <div id="buttons" class="hidden">
+  <div id="actions" class="actions hidden">
     <button onclick="copyPassword()">نسخ</button>
-    <button class="download-btn" onclick="downloadPassword()">
-      <img src="Download password.png" alt="تحميل">
+    <a href="Download password.png" download>
+      <button>تحميل</button>
+    </a>
+  </div>
+
+  <div style="margin-top: 30px;">
+    <button onclick="window.open('https://ibrahimmustafacv.github.io/my-social-media-page/', '_blank')">
+      تابعنا هنا
     </button>
   </div>
 </div>
@@ -166,9 +158,9 @@
   const strengthEl = document.getElementById('strength');
   const questionsDiv = document.getElementById('questions');
   const nextBtn = document.getElementById('next');
-  const randomBtn = document.getElementById('generate-random');
   const resultEl = document.getElementById('result');
-  const buttonsDiv = document.getElementById('buttons');
+  const generateRandomBtn = document.getElementById('generateRandom');
+  const actionsDiv = document.getElementById('actions');
 
   let currentQuestion = 0;
   let answers = [];
@@ -196,29 +188,24 @@
 
   strengthEl.addEventListener('change', () => {
     resultEl.classList.add('hidden');
-    buttonsDiv.classList.add('hidden');
+    actionsDiv.classList.add('hidden');
     currentQuestion = 0;
     answers = [];
     questionsDiv.innerHTML = '';
     nextBtn.classList.add('hidden');
-    randomBtn.classList.add('hidden');
+    generateRandomBtn.classList.add('hidden');
 
     const level = strengthEl.value;
-    if (level === 'easy') {
-      currentSet = easyQuestions;
-      showQuestion(currentSet[currentQuestion]);
-      nextBtn.classList.remove('hidden');
-    } else if (level === 'medium') {
-      currentSet = mediumQuestions;
-      showQuestion(currentSet[currentQuestion]);
-      nextBtn.classList.remove('hidden');
-    } else if (level === 'strong') {
-      currentSet = strongQuestions;
-      showQuestion(currentSet[currentQuestion]);
-      nextBtn.classList.remove('hidden');
-    } else if (level === 'random') {
-      randomBtn.classList.remove('hidden');
-    }
+    if (level === 'easy') currentSet = easyQuestions;
+    else if (level === 'medium') currentSet = mediumQuestions;
+    else if (level === 'strong') currentSet = strongQuestions;
+    else if (level === 'random') {
+      generateRandomBtn.classList.remove('hidden');
+      return;
+    } else return;
+
+    showQuestion(currentSet[currentQuestion]);
+    nextBtn.classList.remove('hidden');
   });
 
   function showQuestion(q) {
@@ -241,11 +228,15 @@
     }
   });
 
-  randomBtn.addEventListener('click', () => {
-    generateRandomPassword();
+  generateRandomBtn.addEventListener('click', () => {
+    const pw = generateRandomPassword(16);
+    resultEl.innerHTML = pw;
+    resultEl.classList.remove('hidden');
+    actionsDiv.classList.remove('hidden');
   });
 
   function generatePassword(level) {
+    resultEl.innerHTML = '';
     let pw = '';
     if (level === 'easy') {
       pw = answers[0].slice(0,2) + answers[1].slice(2,4) + answers[2].slice(4,6);
@@ -254,40 +245,26 @@
     } else if (level === 'strong') {
       pw = `${answers[0]}.${answers[1]}${answers[2]}*#${answers[3].toUpperCase()}${answers[3].toLowerCase()}${answers[4]}${answers[5].toUpperCase()}${answers[5].toLowerCase()}s`;
     }
-    showResult(pw);
-  }
-
-  function generateRandomPassword() {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?";
-    let pw = "";
-    for (let i = 0; i < 16; i++) {
-      pw += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    showResult(pw);
-  }
-
-  function showResult(pw) {
-    resultEl.innerText = pw;
+    resultEl.textContent = pw;
     resultEl.classList.remove('hidden');
-    buttonsDiv.classList.remove('hidden');
+    actionsDiv.classList.remove('hidden');
+  }
+
+  function generateRandomPassword(length) {
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~";
+    let pass = "";
+    for (let i = 0; i < length; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return pass;
   }
 
   function copyPassword() {
-    const pw = resultEl.innerText;
-    navigator.clipboard.writeText(pw).then(() => {
-      alert('تم نسخ كلمة المرور!');
+    const text = resultEl.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      alert("تم نسخ كلمة المرور!");
     });
   }
-
-  function downloadPassword() {
-    const pw = resultEl.innerText;
-    const blob = new Blob([pw], { type: 'text/plain' });
-    const link = document.createElement('a');
-    link.download = 'password.txt';
-    link.href = window.URL.createObjectURL(blob);
-    link.click();
-  }
 </script>
-
 </body>
 </html>
