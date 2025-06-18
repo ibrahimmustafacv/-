@@ -108,6 +108,14 @@
       gap: 10px;
       margin-top: 10px;
     }
+    .actions.hidden {
+      display: none;
+    }
+    .download-icon {
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+    }
   </style>
 </head>
 <body>
@@ -138,7 +146,7 @@
   <div id="actions" class="actions hidden">
     <button onclick="copyPassword()">نسخ</button>
     <a href="Download password.png" download>
-      <button>تحميل</button>
+      <img src="Download password.png" alt="Download" class="download-icon">
     </a>
   </div>
 
@@ -230,9 +238,7 @@
 
   generateRandomBtn.addEventListener('click', () => {
     const pw = generateRandomPassword(16);
-    resultEl.innerHTML = pw;
-    resultEl.classList.remove('hidden');
-    actionsDiv.classList.remove('hidden');
+    showPassword(pw);
   });
 
   function generatePassword(level) {
@@ -245,6 +251,10 @@
     } else if (level === 'strong') {
       pw = `${answers[0]}.${answers[1]}${answers[2]}*#${answers[3].toUpperCase()}${answers[3].toLowerCase()}${answers[4]}${answers[5].toUpperCase()}${answers[5].toLowerCase()}s`;
     }
+    showPassword(pw);
+  }
+
+  function showPassword(pw) {
     resultEl.textContent = pw;
     resultEl.classList.remove('hidden');
     actionsDiv.classList.remove('hidden');
@@ -266,5 +276,6 @@
     });
   }
 </script>
+
 </body>
 </html>
