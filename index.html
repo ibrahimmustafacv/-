@@ -16,38 +16,44 @@
       direction: rtl;
       text-align: center;
       color: white;
+      overflow: hidden;
+    }
+    video.bg, #video-container video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
     }
     video.bg {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      min-width: 100%;
-      min-height: 100%;
-      z-index: -1;
-      object-fit: cover;
       filter: brightness(0.3);
     }
     #video-container {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
-      overflow: hidden;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
     }
     #video-container video {
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      border: none;
-      border-radius: 0;
+      z-index: 2;
     }
     #app {
       display: none;
+      position: relative;
+      z-index: 3;
       width: 100%;
       max-width: 600px;
       margin: auto;
       padding: 20px;
       animation: fadeIn 2s ease-in-out;
-      position: relative;
-      z-index: 2;
     }
     h2 {
       color: #ffffff;
@@ -111,17 +117,14 @@
 </head>
 <body>
 
-<!-- الخلفية -->
 <video class="bg" autoplay loop muted>
   <source src="background.mp4" type="video/mp4">
 </video>
 
-<!-- الفيديو التمهيدي -->
 <div id="video-container">
   <video src="video.mp4" autoplay muted></video>
 </div>
 
-<!-- التطبيق -->
 <div id="app">
   <h2>اختار قوة كلمة المرور</h2>
   <select id="strength">
@@ -137,10 +140,10 @@
 </div>
 
 <script>
-  // بعد 15 ثانية اختفي الفيديو التمهيدي واظهر التطبيق
   setTimeout(() => {
     document.getElementById('video-container').style.display = 'none';
     document.getElementById('app').style.display = 'block';
+    document.body.style.overflow = 'auto';
   }, 15000);
 
   const strengthEl = document.getElementById('strength');
@@ -225,6 +228,5 @@
     resultEl.classList.remove('hidden');
   }
 </script>
-
 </body>
 </html>
