@@ -16,64 +16,45 @@
       direction: rtl;
       text-align: center;
       color: white;
-      overflow: hidden;
     }
-
     video.bg {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
       object-fit: cover;
       filter: brightness(0.3);
-      z-index: -2;
     }
-
-    #video-container {
-      width: 100%;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 2;
-      background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #video-container video {
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-    }
-
-    #app {
-      display: none;
-      position: relative;
-      z-index: 3;
+    #video-container, #app {
       width: 100%;
       max-width: 600px;
       margin: auto;
       padding: 20px;
+      position: relative;
+    }
+    video {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    #app {
+      display: none;
       animation: fadeIn 2s ease-in-out;
     }
-
     h2 {
       color: #ffffff;
       font-size: 28px;
       margin-bottom: 20px;
       text-shadow: 1px 1px 5px #000;
     }
-
     .section {
       margin: 20px 0;
     }
-
     .hidden {
       display: none;
     }
-
     .result {
       background: rgba(255,255,255,0.1);
       padding: 15px;
@@ -81,11 +62,10 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(255,255,255,0.2);
       backdrop-filter: blur(8px);
+      font-size: 20px;
       direction: ltr;
       text-align: center;
-      word-break: break-word;
     }
-
     input, select, button {
       padding: 12px;
       margin: 8px;
@@ -98,16 +78,13 @@
       backdrop-filter: blur(4px);
       transition: all 0.3s ease-in-out;
     }
-
     input::placeholder, select, option {
       color: #ccc;
     }
-
     input:focus, select:focus {
       outline: none;
       background-color: rgba(255, 255, 255, 0.3);
     }
-
     button {
       background: linear-gradient(135deg, #1e90ff, #00bfff);
       color: white;
@@ -115,17 +92,14 @@
       cursor: pointer;
       transition: background 0.3s ease-in-out;
     }
-
     button:hover {
       background: linear-gradient(135deg, #0066cc, #0099cc);
     }
-
     label {
       display: block;
       font-size: 16px;
       margin-bottom: 6px;
     }
-
     @keyframes fadeIn {
       from {opacity: 0; transform: translateY(20px);}
       to {opacity: 1; transform: translateY(0);}
@@ -139,7 +113,7 @@
 </video>
 
 <div id="video-container">
-  <video src="video.mp4" autoplay muted playsinline></video>
+  <video src="video.mp4" autoplay muted></video>
 </div>
 
 <div id="app">
@@ -154,7 +128,6 @@
 
   <div id="questions" class="section"></div>
   <button id="next" class="hidden">التالي</button>
-  <button id="generateRandomBtn" class="hidden" onclick="generateRandomPassword()">توليد كلمة مرور</button>
   <div id="result" class="result hidden"></div>
 </div>
 
@@ -162,13 +135,11 @@
   setTimeout(() => {
     document.getElementById('video-container').style.display = 'none';
     document.getElementById('app').style.display = 'block';
-    document.body.style.overflow = 'auto';
   }, 15000);
 
   const strengthEl = document.getElementById('strength');
   const questionsDiv = document.getElementById('questions');
   const nextBtn = document.getElementById('next');
-  const generateRandomBtn = document.getElementById('generateRandomBtn');
   const resultEl = document.getElementById('result');
 
   let currentQuestion = 0;
@@ -194,27 +165,29 @@
     { label: 'حرف مميز آخر:', id: 'char2' }
   ];
 
-  let currentSet = [];
-
   strengthEl.addEventListener('change', () => {
     resultEl.classList.add('hidden');
     currentQuestion = 0;
     answers = [];
     questionsDiv.innerHTML = '';
     nextBtn.classList.add('hidden');
-    generateRandomBtn.classList.add('hidden');
 
     const level = strengthEl.value;
-    if (level === 'easy') currentSet = easyQuestions;
-    else if (level === 'medium') currentSet = mediumQuestions;
-    else if (level === 'strong') currentSet = strongQuestions;
-    else if (level === 'random') {
-      generateRandomBtn.classList.remove('hidden');
-      return;
-    } else return;
-
-    showQuestion(currentSet[currentQuestion]);
-    nextBtn.classList.remove('hidden');
+    if (level === 'easy') {
+      currentSet = easyQuestions;
+      showQuestion(currentSet[currentQuestion]);
+      nextBtn.classList.remove('hidden');
+    } else if (level === 'medium') {
+      currentSet = mediumQuestions;
+      showQuestion(currentSet[currentQuestion]);
+      nextBtn.classList.remove('hidden');
+    } else if (level === 'strong') {
+      currentSet = strongQuestions;
+      showQuestion(currentSet[currentQuestion]);
+      nextBtn.classList.remove('hidden');
+    } else if (level === 'random') {
+      generateRandomPassword();
+    }
   });
 
   function showQuestion(q) {
@@ -244,7 +217,7 @@
       resultEl.innerHTML = `كلمة المرور: ${pw}<br>← أول رقمين من تاريخ الميلاد<br>← ثاني رقمين من رقم التليفون<br>← آخر رقمين من الذكرى`;
     } else if (level === 'medium') {
       const pw = answers[0] + answers[1];
-      resultEl.innerHTML = `كلمة المرور: ${pw}<br>← الاسم اللي اخترته + الرقم`;
+      resultEl.innerHTML = `كلمة المرور: ${pw}<br>← الاسم اللي اخترته<br>← الرقم أو التاريخ`;
     } else if (level === 'strong') {
       const pw = `${answers[0]}.${answers[1]}${answers[2]}*#${answers[3].toUpperCase()}${answers[3].toLowerCase()}${answers[4]}${answers[5].toUpperCase()}${answers[5].toLowerCase()}s`;
       resultEl.innerHTML = `كلمة المرور القوية: ${pw}`;
@@ -258,9 +231,10 @@
     for (let i = 0; i < 16; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    resultEl.innerText = `🔒 كلمة المرور العشوائية: ${password}`;
+    resultEl.innerText = password;
     resultEl.classList.remove('hidden');
   }
 </script>
+
 </body>
 </html>
