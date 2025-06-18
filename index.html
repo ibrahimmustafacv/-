@@ -14,20 +14,44 @@
       margin: 0;
       padding: 0;
     }
+
+    /* فيديو الخلفية */
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      display: none;
+    }
+
     #video-container, #app {
+      width: 100%;
       max-width: 600px;
       margin: auto;
       padding: 20px;
     }
+
+    video {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+
     #app {
       display: none;
     }
+
     .section {
       margin: 20px 0;
     }
+
     .hidden {
       display: none;
     }
+
     .result {
       background: #fff;
       padding: 15px;
@@ -35,42 +59,38 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+
     .arrow {
       font-size: 18px;
       margin: 4px 0;
     }
-    input, select {
-      width: 90%;
+
+    input, select, button {
       padding: 10px;
-      margin: 8px 0;
+      margin: 5px;
+      width: 90%;
+      max-width: 300px;
+      border-radius: 5px;
       border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
     }
+
     button {
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #4CAF50;
+      background-color: #007bff;
       color: white;
-      border: none;
-      border-radius: 6px;
       cursor: pointer;
     }
+
     button:hover {
-      background-color: #45a049;
-    }
-    label {
-      display: block;
-      margin: 10px 0;
-    }
-    video {
-      width: 100%;
-      height: auto;
-      border-radius: 10px;
+      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
+
+<!-- فيديو الخلفية -->
+<video id="bg-video" autoplay muted loop playsinline>
+  <source src="background.mp4" type="video/mp4">
+</video>
 
 <div id="video-container">
   <video src="video.mp4" autoplay muted></video>
@@ -94,6 +114,7 @@
   setTimeout(() => {
     document.getElementById('video-container').style.display = 'none';
     document.getElementById('app').style.display = 'block';
+    document.getElementById('bg-video').style.display = 'block';
   }, 15000);
 
   const strengthEl = document.getElementById('strength');
@@ -111,31 +132,29 @@
 
     if (level === 'easy') {
       inputsDiv.innerHTML = `
-        <label>تاريخ الميلاد<input type="text" id="birth" placeholder="مثلاً: 19900214"></label>
-        <label>رقم التليفون<input type="text" id="phone" placeholder="مثلاً: 01012345678"></label>
-        <label>تاريخ ذكرى سعيدة<input type="text" id="memory" placeholder="مثلاً: 20200101"></label>
+        <label>تاريخ الميلاد<input type="text" id="birth"></label><br>
+        <label>رقم التليفون<input type="text" id="phone"></label><br>
+        <label>تاريخ ذكرى سعيدة<input type="text" id="memory"></label><br>
         <label><input type="checkbox" id="skip"> تخطي إدخال البيانات</label>
       `;
     } else if (level === 'medium') {
       inputsDiv.innerHTML = `
-        <label>اختار اسم:
-          <select id="name-type">
-            <option value="">-- اختار --</option>
-            <option value="اسمي">اسمي</option>
-            <option value="زوجتي">اسم زوجتي</option>
-            <option value="بنتي">اسم بنتي</option>
-          </select>
-        </label>
-        <label>رقم/تاريخ/رقم مميز<input type="text" id="medium-number" placeholder="مثلاً: 12345 أو 19900214"></label>
+        <label>اختار اسم:<select id="name-type">
+          <option value="">-- اختار --</option>
+          <option value="اسمي">اسمي</option>
+          <option value="زوجتي">اسم زوجتي</option>
+          <option value="بنتي">اسم بنتي</option>
+        </select></label><br>
+        <label>رقم/تاريخ/رقم مميز<input type="text" id="medium-number"></label>
       `;
     } else if (level === 'strong') {
       inputsDiv.innerHTML = `
-        <label>اسم بالإنجليزية<input type="text" id="eng-name" placeholder="مثلاً: memo"></label>
-        <label>رقم مميز جدًا<input type="text" id="special-num" placeholder="مثلاً: 48522844"></label>
-        <label>أول حرفين من اسمك بالإنجليزية<input type="text" id="initials" placeholder="مثلاً: me"></label>
-        <label>حرف مميز<input type="text" id="char" placeholder="مثلاً: a"></label>
-        <label>رقمين مميزين<input type="text" id="two-digits" placeholder="مثلاً: 48"></label>
-        <label>حرف مميز آخر<input type="text" id="last-char" placeholder="مثلاً: e"></label>
+        <label>اسم بالإنجليزية<input type="text" id="eng-name"></label><br>
+        <label>رقم مميز جدًا<input type="text" id="special-num"></label><br>
+        <label>أول حرفين من اسمك بالإنجليزية<input type="text" id="initials"></label><br>
+        <label>حرف مميز<input type="text" id="char"></label><br>
+        <label>رقمين مميزين<input type="text" id="two-digits"></label><br>
+        <label>حرف مميز آخر<input type="text" id="last-char"></label>
       `;
     }
   });
