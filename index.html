@@ -1,4 +1,3 @@
-<!-- الكود كامل -->
 <!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -54,7 +53,7 @@
       margin: 20px 0;
     }
     .hidden {
-      display: none;
+      display: none !important;
     }
     .result {
       background: rgba(255,255,255,0.1);
@@ -66,7 +65,6 @@
       font-size: 20px;
       direction: ltr;
       text-align: center;
-      position: relative;
     }
     input, select, button {
       padding: 12px;
@@ -108,12 +106,13 @@
       justify-content: center;
       align-items: center;
       gap: 10px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
     .download-btn {
       background: none;
       border: none;
       cursor: pointer;
+      padding: 0;
     }
     .download-btn img {
       width: 40px;
