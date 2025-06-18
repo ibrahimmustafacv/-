@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>باسوردك في جيبك</title>
   <style>
     * {
@@ -16,12 +16,6 @@
       direction: rtl;
       text-align: center;
       color: white;
-    }
-    header {
-      padding: 15px 0;
-      background-color: #000;
-      font-size: 24px;
-      font-weight: bold;
     }
     video.bg {
       position: fixed;
@@ -49,9 +43,15 @@
       display: none;
       animation: fadeIn 2s ease-in-out;
     }
+    h1.site-title {
+      font-size: 32px;
+      color: #fff;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 6px #000;
+    }
     h2 {
       color: #ffffff;
-      font-size: 28px;
+      font-size: 24px;
       margin-bottom: 20px;
       text-shadow: 1px 1px 5px #000;
     }
@@ -68,8 +68,6 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(255,255,255,0.2);
       backdrop-filter: blur(8px);
-      font-size: 18px;
-      direction: ltr;
     }
     input, select, button {
       padding: 12px;
@@ -105,24 +103,11 @@
       font-size: 16px;
       margin-bottom: 6px;
     }
-    .icon-buttons {
+    .action-buttons {
       display: flex;
       justify-content: center;
-      gap: 15px;
-      margin-top: 10px;
-    }
-    .icon-buttons button {
-      border-radius: 25px;
-      padding: 10px 18px;
-      font-size: 14px;
-    }
-    .icon-buttons img {
-      width: 28px;
-      height: 28px;
-    }
-    #follow-btn {
-      margin-top: 25px;
-      background: #28a745;
+      gap: 10px;
+      margin-top: 15px;
     }
     @keyframes fadeIn {
       from {opacity: 0; transform: translateY(20px);}
@@ -132,7 +117,6 @@
 </head>
 <body>
 
-<header>باسوردك في جيبك</header>
 <video class="bg" autoplay loop muted>
   <source src="background.mp4" type="video/mp4">
 </video>
@@ -142,7 +126,9 @@
 </div>
 
 <div id="app">
+  <h1 class="site-title">باسوردك في جيبك</h1>
   <h2>اختار قوة كلمة المرور</h2>
+
   <select id="strength">
     <option value="">-- اختار --</option>
     <option value="easy">سهلة</option>
@@ -153,18 +139,21 @@
 
   <div id="questions" class="section"></div>
   <button id="next" class="hidden">التالي</button>
-  <button id="generate-random" class="hidden">توليد كلمة مرور</button>
-
+  <button id="generateRandom" class="hidden">توليد كلمة مرور</button>
   <div id="result" class="result hidden"></div>
 
-  <div class="icon-buttons hidden" id="actions">
-    <button id="copy">نسخ</button>
-    <button id="download" title="تحميل">
-      <img src="Download password.png" alt="download">
+  <div id="actions" class="action-buttons hidden">
+    <button id="copyBtn">نسخ</button>
+    <button id="downloadBtn">
+      <img src="Download password.png" alt="تحميل" style="width: 24px; height: 24px;">
     </button>
   </div>
 
-  <button id="follow-btn" onclick="window.open('https://ibrahimmustafacv.github.io/my-social-media-page/', '_blank')">تابعنا هنا</button>
+  <div class="section">
+    <a href="https://ibrahimmustafacv.github.io/my-social-media-page/" target="_blank">
+      <button>تابعنا هنا</button>
+    </a>
+  </div>
 </div>
 
 <script>
@@ -176,14 +165,15 @@
   const strengthEl = document.getElementById('strength');
   const questionsDiv = document.getElementById('questions');
   const nextBtn = document.getElementById('next');
+  const generateRandomBtn = document.getElementById('generateRandom');
   const resultEl = document.getElementById('result');
-  const actionsEl = document.getElementById('actions');
-  const copyBtn = document.getElementById('copy');
-  const downloadBtn = document.getElementById('download');
-  const generateRandomBtn = document.getElementById('generate-random');
+  const copyBtn = document.getElementById('copyBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const actions = document.getElementById('actions');
 
   let currentQuestion = 0;
   let answers = [];
+  let currentSet = [];
 
   const easyQuestions = [
     { label: 'ما هو تاريخ ميلادك؟', id: 'birth' },
@@ -205,33 +195,26 @@
     { label: 'حرف مميز آخر:', id: 'char2' }
   ];
 
-  let currentSet = [];
-
   strengthEl.addEventListener('change', () => {
     resultEl.classList.add('hidden');
-    actionsEl.classList.add('hidden');
-    generateRandomBtn.classList.add('hidden');
-    nextBtn.classList.add('hidden');
-    questionsDiv.innerHTML = '';
+    actions.classList.add('hidden');
     currentQuestion = 0;
     answers = [];
+    questionsDiv.innerHTML = '';
+    nextBtn.classList.add('hidden');
+    generateRandomBtn.classList.add('hidden');
 
     const level = strengthEl.value;
-    if (level === 'easy') {
-      currentSet = easyQuestions;
-      showQuestion(currentSet[currentQuestion]);
-      nextBtn.classList.remove('hidden');
-    } else if (level === 'medium') {
-      currentSet = mediumQuestions;
-      showQuestion(currentSet[currentQuestion]);
-      nextBtn.classList.remove('hidden');
-    } else if (level === 'strong') {
-      currentSet = strongQuestions;
-      showQuestion(currentSet[currentQuestion]);
-      nextBtn.classList.remove('hidden');
-    } else if (level === 'random') {
+    if (level === 'easy') currentSet = easyQuestions;
+    else if (level === 'medium') currentSet = mediumQuestions;
+    else if (level === 'strong') currentSet = strongQuestions;
+    else if (level === 'random') {
       generateRandomBtn.classList.remove('hidden');
-    }
+      return;
+    } else return;
+
+    showQuestion(currentSet[currentQuestion]);
+    nextBtn.classList.remove('hidden');
   });
 
   function showQuestion(q) {
@@ -244,6 +227,7 @@
   nextBtn.addEventListener('click', () => {
     const input = questionsDiv.querySelector('input');
     answers.push(input.value.trim());
+
     currentQuestion++;
     if (currentQuestion < currentSet.length) {
       showQuestion(currentSet[currentQuestion]);
@@ -254,10 +238,12 @@
   });
 
   generateRandomBtn.addEventListener('click', () => {
-    const pw = generateRandomPassword(14);
-    resultEl.textContent = pw;
-    resultEl.classList.remove('hidden');
-    actionsEl.classList.remove('hidden');
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+    let randomPassword = "";
+    for (let i = 0; i < 16; i++) {
+      randomPassword += charset[Math.floor(Math.random() * charset.length)];
+    }
+    showPasswordOnly(randomPassword);
   });
 
   function generatePassword(level) {
@@ -269,38 +255,29 @@
     } else if (level === 'strong') {
       pw = `${answers[0]}.${answers[1]}${answers[2]}*#${answers[3].toUpperCase()}${answers[3].toLowerCase()}${answers[4]}${answers[5].toUpperCase()}${answers[5].toLowerCase()}s`;
     }
-    resultEl.textContent = pw;
+    showPasswordOnly(pw);
+  }
+
+  function showPasswordOnly(password) {
+    resultEl.textContent = password;
     resultEl.classList.remove('hidden');
-    actionsEl.classList.remove('hidden');
+    actions.classList.remove('hidden');
+
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(password);
+    };
+
+    downloadBtn.onclick = () => {
+      const blob = new Blob([password], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "password.txt";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
   }
-
-  function generateRandomPassword(length) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-    let pw = '';
-    for (let i = 0; i < length; i++) {
-      pw += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return pw;
-  }
-
-  copyBtn.addEventListener('click', () => {
-    const text = resultEl.textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      alert("تم نسخ كلمة المرور!");
-    });
-  });
-
-  downloadBtn.addEventListener('click', () => {
-    const pw = resultEl.textContent;
-    const blob = new Blob([pw], { type: 'text/plain' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'password.txt';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  });
 </script>
-
 </body>
 </html>
