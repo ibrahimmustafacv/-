@@ -83,7 +83,7 @@
       backdrop-filter: blur(8px);
       direction: ltr;
       text-align: center;
-      word-break: break-all;
+      word-break: break-word;
     }
 
     input, select, button {
@@ -149,17 +149,13 @@
     <option value="easy">سهلة</option>
     <option value="medium">متوسطة</option>
     <option value="strong">قوية</option>
+    <option value="random">عشوائية</option>
   </select>
 
   <div id="questions" class="section"></div>
   <button id="next" class="hidden">التالي</button>
+  <button id="generateRandomBtn" class="hidden" onclick="generateRandomPassword()">توليد كلمة مرور</button>
   <div id="result" class="result hidden"></div>
-
-  <hr style="margin: 30px 0; border: none; height: 1px; background: #444;">
-
-  <h2>توليد كلمة مرور عشوائية قوية</h2>
-  <button onclick="generateRandomPassword()">توليد كلمة مرور</button>
-  <div id="randomPassword" class="result hidden"></div>
 </div>
 
 <script>
@@ -172,8 +168,8 @@
   const strengthEl = document.getElementById('strength');
   const questionsDiv = document.getElementById('questions');
   const nextBtn = document.getElementById('next');
+  const generateRandomBtn = document.getElementById('generateRandomBtn');
   const resultEl = document.getElementById('result');
-  const randomPasswordEl = document.getElementById('randomPassword');
 
   let currentQuestion = 0;
   let answers = [];
@@ -206,12 +202,16 @@
     answers = [];
     questionsDiv.innerHTML = '';
     nextBtn.classList.add('hidden');
+    generateRandomBtn.classList.add('hidden');
 
     const level = strengthEl.value;
     if (level === 'easy') currentSet = easyQuestions;
     else if (level === 'medium') currentSet = mediumQuestions;
     else if (level === 'strong') currentSet = strongQuestions;
-    else return;
+    else if (level === 'random') {
+      generateRandomBtn.classList.remove('hidden');
+      return;
+    } else return;
 
     showQuestion(currentSet[currentQuestion]);
     nextBtn.classList.remove('hidden');
@@ -244,7 +244,7 @@
       resultEl.innerHTML = `كلمة المرور: ${pw}<br>← أول رقمين من تاريخ الميلاد<br>← ثاني رقمين من رقم التليفون<br>← آخر رقمين من الذكرى`;
     } else if (level === 'medium') {
       const pw = answers[0] + answers[1];
-      resultEl.innerHTML = `كلمة المرور: ${pw}<br>← الاسم اللي اخترته<br>← الرقم أو التاريخ`;
+      resultEl.innerHTML = `كلمة المرور: ${pw}<br>← الاسم اللي اخترته + الرقم`;
     } else if (level === 'strong') {
       const pw = `${answers[0]}.${answers[1]}${answers[2]}*#${answers[3].toUpperCase()}${answers[3].toLowerCase()}${answers[4]}${answers[5].toUpperCase()}${answers[5].toLowerCase()}s`;
       resultEl.innerHTML = `كلمة المرور القوية: ${pw}`;
@@ -258,8 +258,8 @@
     for (let i = 0; i < 16; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    randomPasswordEl.innerText = `🔒 ${password}`;
-    randomPasswordEl.classList.remove('hidden');
+    resultEl.innerText = `🔒 كلمة المرور العشوائية: ${password}`;
+    resultEl.classList.remove('hidden');
   }
 </script>
 </body>
