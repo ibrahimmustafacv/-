@@ -81,6 +81,9 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(255,255,255,0.2);
       backdrop-filter: blur(8px);
+      direction: ltr;
+      text-align: center;
+      word-break: break-all;
     }
 
     input, select, button {
@@ -151,6 +154,12 @@
   <div id="questions" class="section"></div>
   <button id="next" class="hidden">التالي</button>
   <div id="result" class="result hidden"></div>
+
+  <hr style="margin: 30px 0; border: none; height: 1px; background: #444;">
+
+  <h2>توليد كلمة مرور عشوائية قوية</h2>
+  <button onclick="generateRandomPassword()">توليد كلمة مرور</button>
+  <div id="randomPassword" class="result hidden"></div>
 </div>
 
 <script>
@@ -164,6 +173,7 @@
   const questionsDiv = document.getElementById('questions');
   const nextBtn = document.getElementById('next');
   const resultEl = document.getElementById('result');
+  const randomPasswordEl = document.getElementById('randomPassword');
 
   let currentQuestion = 0;
   let answers = [];
@@ -240,6 +250,16 @@
       resultEl.innerHTML = `كلمة المرور القوية: ${pw}`;
     }
     resultEl.classList.remove('hidden');
+  }
+
+  function generateRandomPassword() {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=<>?";
+    let password = "";
+    for (let i = 0; i < 16; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    randomPasswordEl.innerText = `🔒 ${password}`;
+    randomPasswordEl.classList.remove('hidden');
   }
 </script>
 </body>
