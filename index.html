@@ -2,16 +2,72 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>باسوردك في جيبك</title>
   <style>
-    body { font-family: sans-serif; direction: rtl; text-align: center; background: #f9f9f9; }
-    #video-container, #app { max-width: 600px; margin: auto; padding: 20px; }
-    #app { display: none; }
-    .section { margin: 20px 0; }
-    .hidden { display: none; }
-    .result { background: #fff; padding: 15px; margin-top: 10px; border-radius: 8px; }
-    .arrow { font-size: 18px; margin: 4px 0; }
+    * { box-sizing: border-box; }
+    body {
+      font-family: sans-serif;
+      direction: rtl;
+      text-align: center;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    #video-container, #app {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
+    #app {
+      display: none;
+    }
+    .section {
+      margin: 20px 0;
+    }
+    .hidden {
+      display: none;
+    }
+    .result {
+      background: #fff;
+      padding: 15px;
+      margin-top: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .arrow {
+      font-size: 18px;
+      margin: 4px 0;
+    }
+    input, select {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+    video {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body>
@@ -55,29 +111,31 @@
 
     if (level === 'easy') {
       inputsDiv.innerHTML = `
-        <label>تاريخ الميلاد<input type="text" id="birth"></label><br>
-        <label>رقم التليفون<input type="text" id="phone"></label><br>
-        <label>تاريخ ذكرى سعيدة<input type="text" id="memory"></label><br>
+        <label>تاريخ الميلاد<input type="text" id="birth" placeholder="مثلاً: 19900214"></label>
+        <label>رقم التليفون<input type="text" id="phone" placeholder="مثلاً: 01012345678"></label>
+        <label>تاريخ ذكرى سعيدة<input type="text" id="memory" placeholder="مثلاً: 20200101"></label>
         <label><input type="checkbox" id="skip"> تخطي إدخال البيانات</label>
       `;
     } else if (level === 'medium') {
       inputsDiv.innerHTML = `
-        <label>اختار اسم:<select id="name-type">
-          <option value="">-- اختار --</option>
-          <option value="اسمي">اسمي</option>
-          <option value="زوجتي">اسم زوجتي</option>
-          <option value="بنتي">اسم بنتي</option>
-        </select></label><br>
-        <label>رقم/تاريخ/رقم مميز<input type="text" id="medium-number"></label>
+        <label>اختار اسم:
+          <select id="name-type">
+            <option value="">-- اختار --</option>
+            <option value="اسمي">اسمي</option>
+            <option value="زوجتي">اسم زوجتي</option>
+            <option value="بنتي">اسم بنتي</option>
+          </select>
+        </label>
+        <label>رقم/تاريخ/رقم مميز<input type="text" id="medium-number" placeholder="مثلاً: 12345 أو 19900214"></label>
       `;
     } else if (level === 'strong') {
       inputsDiv.innerHTML = `
-        <label>اسم بالإنجليزية<input type="text" id="eng-name"></label><br>
-        <label>رقم مميز جدًا<input type="text" id="special-num"></label><br>
-        <label>أول حرفين من اسمك بالإنجليزية<input type="text" id="initials"></label><br>
-        <label>حرف مميز<input type="text" id="char"></label><br>
-        <label>رقمين مميزين<input type="text" id="two-digits"></label><br>
-        <label>حرف مميز آخر<input type="text" id="last-char"></label>
+        <label>اسم بالإنجليزية<input type="text" id="eng-name" placeholder="مثلاً: memo"></label>
+        <label>رقم مميز جدًا<input type="text" id="special-num" placeholder="مثلاً: 48522844"></label>
+        <label>أول حرفين من اسمك بالإنجليزية<input type="text" id="initials" placeholder="مثلاً: me"></label>
+        <label>حرف مميز<input type="text" id="char" placeholder="مثلاً: a"></label>
+        <label>رقمين مميزين<input type="text" id="two-digits" placeholder="مثلاً: 48"></label>
+        <label>حرف مميز آخر<input type="text" id="last-char" placeholder="مثلاً: e"></label>
       `;
     }
   });
